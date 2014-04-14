@@ -198,6 +198,8 @@ const int markersArray[][NB_FOLDER_STATE] = {
   {SC_MARK_BOXMINUS,      SC_MARK_BOXPLUS,   SC_MARK_VLINE,        SC_MARK_LCORNER,       SC_MARK_BOXPLUSCONNECTED,    SC_MARK_BOXMINUSCONNECTED,    SC_MARK_TCORNER}
 };
 
+#define BACKGROUND(x) ( (x) | 0x80000000 )
+
 void ShaderEditOverlay::initialiseShaderEditor() {
 
 	mShaderEditor.Command(SCI_SETSTYLEBITS, 7);
@@ -209,15 +211,15 @@ void ShaderEditOverlay::initialiseShaderEditor() {
 	mLexer->PropSet("fold", "1");
 
 	// Set up the global default style. These attributes are used wherever no explicit choices are made.
-	SetAStyle(mShaderEditor, STYLE_DEFAULT,     0xFFFFFFFF, 0xD0000000, 16, "c:/windows/fonts/cour.ttf");
+	SetAStyle(mShaderEditor, STYLE_DEFAULT,     0xFFFFFFFF, BACKGROUND( 0x000000 ), 16, "c:/windows/fonts/cour.ttf");
 	mShaderEditor.Command(SCI_STYLECLEARALL);	// Copies global style to all others
-	SetAStyle(mShaderEditor, STYLE_INDENTGUIDE, 0xFFC0C0C0, 0xD0000000, 16, "c:/windows/fonts/cour.ttf");
-	SetAStyle(mShaderEditor, STYLE_BRACELIGHT,  0xFF00FF00, 0xD0000000, 16, "c:/windows/fonts/cour.ttf");
-	SetAStyle(mShaderEditor, STYLE_BRACEBAD,    0xFF0000FF, 0xD0000000, 16, "c:/windows/fonts/cour.ttf");
-	SetAStyle(mShaderEditor, STYLE_LINENUMBER,  0xFFC0C0C0, 0xD0333333, 16, "c:/windows/fonts/cour.ttf");
-	mShaderEditor.Command(SCI_SETFOLDMARGINCOLOUR,   1, 0xD01A1A1A);
-	mShaderEditor.Command(SCI_SETFOLDMARGINHICOLOUR, 1, 0xD01A1A1A);
-	mShaderEditor.Command(SCI_SETSELBACK,            1, 0xD0CC9966);
+	SetAStyle(mShaderEditor, STYLE_INDENTGUIDE, 0xFFC0C0C0, BACKGROUND( 0x000000 ), 16, "c:/windows/fonts/cour.ttf");
+	SetAStyle(mShaderEditor, STYLE_BRACELIGHT,  0xFF00FF00, BACKGROUND( 0x000000 ), 16, "c:/windows/fonts/cour.ttf");
+	SetAStyle(mShaderEditor, STYLE_BRACEBAD,    0xFF0000FF, BACKGROUND( 0x000000 ), 16, "c:/windows/fonts/cour.ttf");
+	SetAStyle(mShaderEditor, STYLE_LINENUMBER,  0xFFC0C0C0, BACKGROUND( 0x333333 ), 16, "c:/windows/fonts/cour.ttf");
+	mShaderEditor.Command(SCI_SETFOLDMARGINCOLOUR,   1, BACKGROUND( 0x1A1A1A ));
+	mShaderEditor.Command(SCI_SETFOLDMARGINHICOLOUR, 1, BACKGROUND( 0x1A1A1A ));
+	mShaderEditor.Command(SCI_SETSELBACK,            1, BACKGROUND( 0xCC9966 ));
 	mShaderEditor.Command(SCI_SETCARETFORE,          0xFFFFFFFF, 0);
 	mShaderEditor.Command(SCI_SETCARETLINEVISIBLE,   1);
 	mShaderEditor.Command(SCI_SETCARETLINEBACK,      0xFFFFFFFF);
@@ -238,51 +240,33 @@ void ShaderEditOverlay::initialiseShaderEditor() {
 	mShaderEditor.Command(SCI_SETTABWIDTH, 4);
 	mShaderEditor.Command(SCI_SETINDENTATIONGUIDES, SC_IV_REAL);
 
-	SetAStyle(mShaderEditor, SCE_C_DEFAULT,      0xFFFFFFFF, 0xD0000000, 16, "c:/windows/fonts/cour.ttf");
-	SetAStyle(mShaderEditor, SCE_C_WORD,         0xFF0066FF, 0xD0000000);
-	SetAStyle(mShaderEditor, SCE_C_WORD2,        0xFFFFFF00, 0xD0000000);
+	SetAStyle(mShaderEditor, SCE_C_DEFAULT,      0xFFFFFFFF, BACKGROUND( 0x000000 ), 16, "c:/windows/fonts/cour.ttf");
+	SetAStyle(mShaderEditor, SCE_C_WORD,         0xFF0066FF, BACKGROUND( 0x000000 ));
+	SetAStyle(mShaderEditor, SCE_C_WORD2,        0xFFFFFF00, BACKGROUND( 0x000000 ));
 	//WTF??? SetAStyle(SCE_C_GLOBALCLASS, 0xFF0000FF, 0xFF000000);
-	SetAStyle(mShaderEditor, SCE_C_PREPROCESSOR, 0xFFC0C0C0, 0xD0000000);
-	SetAStyle(mShaderEditor, SCE_C_NUMBER,       0xFF0080FF, 0xD0000000);
-	SetAStyle(mShaderEditor, SCE_C_OPERATOR,     0xFF00CCFF, 0xD0000000);
-	SetAStyle(mShaderEditor, SCE_C_COMMENT,      0xFF00FF00, 0xD0000000);
-	SetAStyle(mShaderEditor, SCE_C_COMMENTLINE,  0xFF00FF00, 0xD0000000);
+	SetAStyle(mShaderEditor, SCE_C_PREPROCESSOR, 0xFFC0C0C0, BACKGROUND( 0x000000 ));
+	SetAStyle(mShaderEditor, SCE_C_NUMBER,       0xFF0080FF, BACKGROUND( 0x000000 ));
+	SetAStyle(mShaderEditor, SCE_C_OPERATOR,     0xFF00CCFF, BACKGROUND( 0x000000 ));
+	SetAStyle(mShaderEditor, SCE_C_COMMENT,      0xFF00FF00, BACKGROUND( 0x000000 ));
+	SetAStyle(mShaderEditor, SCE_C_COMMENTLINE,  0xFF00FF00, BACKGROUND( 0x000000 ));
 }
 
 void ShaderEditOverlay::initialiseDebugOutputView() {
 	mDebugOutputView.Command(SCI_SETSTYLEBITS, 7);
 
 	// Set up the global default style. These attributes are used wherever no explicit choices are made.
-	SetAStyle(mDebugOutputView, STYLE_DEFAULT,     0xFFFFFFFF, 0xD0000000, 16, "c:/windows/fonts/cour.ttf");
+	SetAStyle(mDebugOutputView, STYLE_DEFAULT,     0xFFFFFFFF, BACKGROUND( 0x000000 ), 16, "c:/windows/fonts/cour.ttf");
 	mDebugOutputView.Command(SCI_STYLECLEARALL);	// Copies global style to all others
 	mDebugOutputView.Command(SCI_SETMARGINWIDTHN, 1, 0);//Calculate correct width
 
 	mDebugOutputView.Command(SCI_SETUSETABS, 1);
 	mDebugOutputView.Command(SCI_SETTABWIDTH, 4);
 	
-	mDebugOutputView.Command(SCI_SETSELBACK,            1, 0xD0CC9966);
+	mDebugOutputView.Command(SCI_SETSELBACK,            1, BACKGROUND( 0xCC9966 ) );
 	mDebugOutputView.Command(SCI_SETCARETFORE,          0xFFFFFFFF, 0);
 	mDebugOutputView.Command(SCI_SETCARETLINEVISIBLE,   1);
 	mDebugOutputView.Command(SCI_SETCARETLINEBACK,      0xFFFFFFFF);
 	mDebugOutputView.Command(SCI_SETCARETLINEBACKALPHA, 0x20);
-}
-
-void ShaderEditOverlay::initialiseSelectionList() {
-	mSelectionList.Command(SCI_SETSTYLEBITS, 7);
-
-	// Set up the global default style. These attributes are used wherever no explicit choices are made.
-	SetAStyle(mSelectionList, STYLE_DEFAULT,     0xFFFFFFFF, 0xD0000000, 16, "c:/windows/fonts/cour.ttf");
-	mSelectionList.Command(SCI_STYLECLEARALL);	// Copies global style to all others
-	mSelectionList.Command(SCI_SETMARGINWIDTHN, 1, 0);//Calculate correct width
-
-	mSelectionList.Command(SCI_SETUSETABS, 1);
-	mSelectionList.Command(SCI_SETTABWIDTH, 4);
-	
-	mSelectionList.Command(SCI_SETSELBACK,            1, 0xD0CC9966);
-	mSelectionList.Command(SCI_SETCARETFORE,          0x00FFFFFF, 0);
-	mSelectionList.Command(SCI_SETCARETLINEVISIBLE,   1);
-	mSelectionList.Command(SCI_SETCARETLINEBACK,      0xFFFFFFFF);
-	mSelectionList.Command(SCI_SETCARETLINEBACKALPHA, 0x20);
 }
 
 void ShaderEditOverlay::initialise(int w, int h)
@@ -291,7 +275,7 @@ void ShaderEditOverlay::initialise(int w, int h)
 	
 	initialiseShaderEditor();
 	initialiseDebugOutputView();
-	initialiseSelectionList();
+//	initialiseSelectionList();
 
 	mSelectedProgram = 0;
 	mSelectedShader  = 0;
@@ -301,17 +285,17 @@ void ShaderEditOverlay::initialise(int w, int h)
 
 	float w1=mWidth-80.0f, h1=mHeight-80.0f;/*80=30+20+30*/
 
-	mShaderEditor.SetSize(w1*0.7f, h1*0.7f);
-	mDebugOutputView.SetSize(w1*0.7f, h1*0.3f);
-	mSelectionList.SetSize(w1*0.3f, h1+20.0f);
+	mShaderEditor.SetSize(w1, h1*0.7f);
+	mDebugOutputView.SetSize(w1, h1*0.3f);
+	//mSelectionList.SetSize(w1*0.3f, h1+20.0f);
 
-	mActiveEditor = &mSelectionList;
+	mActiveEditor = &mShaderEditor;
 }
 
 void ShaderEditOverlay::reset()
 {
-	mSelectionMode=SELMODE_PROGRAM_LIST;
-	fillListWithPrograms();
+	//mSelectionMode=SELMODE_;
+//	fillListWithPrograms();
 
 	mSelectedShader=0;
 	mSelectedProgram=0;
@@ -319,14 +303,16 @@ void ShaderEditOverlay::reset()
 	mShaderEditor.Command(SCI_CANCEL);
 	mShaderEditor.Command(SCI_CLEARALL);
 	mShaderEditor.Command(SCI_EMPTYUNDOBUFFER);
-	mShaderEditor.Command(SCI_SETFOCUS, false);
+	mShaderEditor.Command(SCI_SETFOCUS, true);
 
 	mDebugOutputView.Command(SCI_CANCEL);
 	mDebugOutputView.Command(SCI_CLEARALL);
 	mDebugOutputView.Command(SCI_EMPTYUNDOBUFFER);
 	mDebugOutputView.Command(SCI_SETFOCUS, false);
 
-	mSelectionList.Command(SCI_SETFOCUS, true);
+  loadShaderSource();
+
+	//mSelectionList.Command(SCI_SETFOCUS, true);
 }
 
 void ShaderEditOverlay::saveShaderSource()
@@ -375,6 +361,10 @@ void ShaderEditOverlay::compileProgram()
 
 	if (!res) goto error;
 
+  FILE * f = fopen("shader.fs","wt");
+  fwrite( tr.lpstrText, lengthDoc, 1, f );
+  fclose(f);
+
 	glCompileShader(mSelectedShader);
 	glGetShaderiv(mSelectedShader, GL_COMPILE_STATUS, &res);
 	assert(res);
@@ -409,61 +399,33 @@ error:
 	mDebugOutputView.Command(SCI_GOTOPOS, 0);
 }
 
-void ShaderEditOverlay::fillListWithShaders()
-{
-	int pos = (int)mSelectionList.Command(SCI_GETCURRENTPOS);
-	int line = mSelectionList.Command(SCI_LINEFROMPOSITION, pos);
-	mSelectedProgram = mPrograms[line];
-
-	GLint attachedCount;
-	glGetProgramiv(mSelectedProgram, GL_ATTACHED_SHADERS, &attachedCount);
-	mAttachedShaders.resize(attachedCount);
-	glGetAttachedShaders(mSelectedProgram, attachedCount, &attachedCount, &mAttachedShaders[0]);
-
-	mSelectionList.Command(SCI_CLEARALL);
-	for (int i=0; i<attachedCount; ++i)
-	{
-		char str[128];
-		GLint type;
-		glGetShaderiv(mAttachedShaders[i], GL_SHADER_TYPE, &type);
-		_snprintf(str, sizeof(str), "%s%s #%d",
-			(i==0)?"":"\n",
-			type==GL_VERTEX_SHADER?"GL_VERTEX_SHADER":"GL_FRAGMENT_SHADER",
-			mAttachedShaders[i]);
-		mSelectionList.Command(SCI_ADDTEXT, strlen(str), reinterpret_cast<LPARAM>(str));
-	}
-	mSelectionList.Command(SCI_GOTOLINE, 0);
-}
-
-void ShaderEditOverlay::fillListWithPrograms()
-{
-	mSelectionList.Command(SCI_CLEARALL);
-	for (size_t i=0; i<mPrograms.size(); ++i)
-	{
-		char str[128];
-		_snprintf(str, 128, "%sProgram #%d", (i==0)?"":"\n", mPrograms[i]);
-		mSelectionList.Command(SCI_ADDTEXT, strlen(str), reinterpret_cast<LPARAM>(str));
-	}
-	mSelectionList.Command(SCI_GOTOLINE, 0);
-}
-
 void ShaderEditOverlay::loadShaderSource()
 {
-	int pos = (int)mSelectionList.Command(SCI_GETCURRENTPOS);
-	int line = mSelectionList.Command(SCI_LINEFROMPOSITION, pos);
-								
+  mSelectedProgram = mPrograms[0];
+
+  GLint attachedCount = 0;
+  glGetProgramiv(mSelectedProgram, GL_ATTACHED_SHADERS, &attachedCount);
+
+  if (attachedCount == 0)
+    return;
+
+  mAttachedShaders.resize(attachedCount);
+  glGetAttachedShaders(mSelectedProgram, attachedCount, &attachedCount, &mAttachedShaders[0]);
+
+  int line = 0;
+
 	GLint len;
 	char* buf;
 
 	mSelectedShader = mAttachedShaders[line];
 	glGetShaderiv(mSelectedShader, GL_SHADER_SOURCE_LENGTH, &len);
-	buf = (char*)alloca(len);
-	glGetShaderSource(mSelectedShader, len, &len, buf);
+	buf = (char*)alloca(len + 1);
+	glGetShaderSource(mSelectedShader, len + 1, &len, buf);
 
 	mShaderEditor.Command(SCI_CANCEL);
 	mShaderEditor.Command(SCI_CLEARALL);
 	mShaderEditor.Command(SCI_SETUNDOCOLLECTION, 0);
-	mShaderEditor.Command(SCI_ADDTEXT, len-1, reinterpret_cast<LPARAM>(buf));
+	mShaderEditor.Command(SCI_ADDTEXT, len, reinterpret_cast<LPARAM>(buf));
 	mShaderEditor.Command(SCI_SETUNDOCOLLECTION, 1);
 	mShaderEditor.Command(SCI_EMPTYUNDOBUFFER);
 	mShaderEditor.Command(SCI_SETSAVEPOINT);
@@ -554,10 +516,10 @@ void ShaderEditOverlay::renderFullscreen()
 
 	float w1=mWidth-80.0f, h1=mHeight-80.0f;
 
-	glTranslatef(30, 30, 0);
-	mSelectionList.Paint();
+ 	glTranslatef(30, 30, 0);
+// 	mSelectionList.Paint();
 
-	glTranslatef(w1*0.3f+20, 0, 0);
+//	glTranslatef(20, 0, 0);
 	mShaderEditor.Paint();
 
 	glTranslatef(0, h1*0.7f+20, 0);
@@ -578,52 +540,10 @@ void ShaderEditOverlay::handleKeyDown(SDL_KeyboardEvent& event)
 	{
 		saveShaderSource();
 	}
-	if ('1'<=event.keysym.sym && event.keysym.sym<='3' && isModEnabled(KMOD_ALT, event.keysym.mod))
-	{
-		mActiveEditor->Command(SCI_SETFOCUS, false);
-		switch(event.keysym.sym)
-		{
-			case '1': mActiveEditor=&mSelectionList; break;
-			case '2': mActiveEditor=&mShaderEditor; break;
-			case '3': mActiveEditor=&mDebugOutputView; break;
-		}
-		mActiveEditor->Command(SCI_SETFOCUS, true);
-	}
-	if (event.keysym.sym==SDLK_F7 && isModEnabled(0, event.keysym.mod)&&mSelectedShader&&mSelectedProgram)
+	if (event.keysym.sym==SDLK_F5 && isModEnabled(0, event.keysym.mod)&&mSelectedShader&&mSelectedProgram)
 	{
 		compileProgram();
 		mRequireReset = true;
-	}
-	else if (mActiveEditor==&mSelectionList)
-	{
-		switch (event.keysym.sym)
-		{
-			case SDLK_UP:
-				mSelectionList.Command(SCI_LINEUP);
-				break;
-			case SDLK_DOWN:
-				mSelectionList.Command(SCI_LINEDOWN);
-				break;
-			case SDLK_RETURN:
-				if (mSelectionMode==SELMODE_PROGRAM_LIST)
-				{
-					fillListWithShaders();
-					mSelectionMode=SELMODE_SHADER_LIST;
-				}
-				else
-				{
-					loadShaderSource();
-				}
-				break;
-			case SDLK_BACKSPACE:
-				if (mSelectionMode==SELMODE_SHADER_LIST)
-				{
-					fillListWithPrograms();
-					mSelectionMode=SELMODE_PROGRAM_LIST;
-				}
-				break;
-		}
-
 	}
 	else
 	{
@@ -686,4 +606,8 @@ void ShaderEditOverlay::handleKeyDown(SDL_KeyboardEvent& event)
 			}
 		}
 	}
+}
+
+void ShaderEditOverlay::handleMouseDown( SDL_MouseButtonEvent& event )
+{
 }

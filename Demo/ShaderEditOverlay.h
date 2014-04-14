@@ -56,7 +56,8 @@ public:
 	void initialise(int w, int h);
 	void reset();
 
-	void handleKeyDown(SDL_KeyboardEvent& event);
+  void handleKeyDown(SDL_KeyboardEvent& event);
+  void handleMouseDown(SDL_MouseButtonEvent& event);
 	void renderFullscreen();
 
 	bool requireReset() {bool prevValue=mRequireReset; mRequireReset = false; return prevValue;}
@@ -66,12 +67,12 @@ public:
 private:
 	void initialiseShaderEditor();
 	void initialiseDebugOutputView();
-	void initialiseSelectionList();
+	//void initialiseSelectionList();
 
 	void saveShaderSource();
 	void compileProgram();
-	void fillListWithShaders();
-	void fillListWithPrograms();
+// 	void fillListWithShaders();
+// 	void fillListWithPrograms();
 	void loadShaderSource();
 
 private:
@@ -99,7 +100,7 @@ private:
 
 	Editor  mShaderEditor;
 	Editor  mDebugOutputView;
-	Editor  mSelectionList;
+	//Editor  mSelectionList;
 	Editor* mActiveEditor;
 
 	float mWidth;

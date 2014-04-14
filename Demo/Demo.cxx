@@ -5,7 +5,11 @@
 #include <SDL_syswm.h>
 #include <gl/glee.h>
 
-char fragmentSource[65536] = "void main()\n{\n\tgl_FragColor=vec4(0, 1, 0, 1);\n}\n";
+char fragmentSource[65536] = "void main()\n"
+"{\n"
+"  vec2 v = gl_FragCoord.xy / vec2(800.0,600.0);\n"
+"  gl_FragColor=v.xyxy;\n"
+"}\n";
 
 static ShaderEditOverlay app;
 
@@ -52,6 +56,15 @@ int main(int /*argc*/, char** /*argv*/)
 		return 0;															// Get Out Of Here. Sorry.
 	}
 
+  FILE * f = fopen("shader.fs","rt");
+  if (f)
+  {
+    ZeroMemory(fragmentSource,65536);
+    int t = fread( fragmentSource, 1, 65535, f );
+    fragmentSource[t] = 0;
+    fclose(f);
+  }
+
 	uint32_t flags = SDL_HWSURFACE|SDL_OPENGLBLIT;									// We Want A Hardware Surface And Special OpenGLBlit Mode
 
 	SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 8 );								// In order to use SDL_OPENGLBLIT we have to
@@ -85,8 +98,9 @@ int main(int /*argc*/, char** /*argv*/)
 	Scintilla_LinkLexers();
 
 	bool run = true;
-	bool visible = false;
+	bool visible = true;
 
+  app.reset();
 	while (run)
 	{
 		SDL_Event	E;
@@ -95,20 +109,25 @@ int main(int /*argc*/, char** /*argv*/)
 			if (E.type==SDL_QUIT) run=false;
 			else if (E.type == SDL_KEYDOWN)
 			{
-				if (E.key.keysym.sym==SDLK_ESCAPE) run=false;
+				if (E.key.keysym.sym==SDLK_F4 && (E.key.keysym.mod == KMOD_LALT || E.key.keysym.mod == KMOD_RALT)) 
+          run=false;
 
-				if (E.key.keysym.sym==SDLK_F5)
+				if (E.key.keysym.sym==SDLK_F11)
 				{
 					visible = !visible;
-					if (visible)
-					{
-						app.reset();
-					}
+// 					if (visible)
+// 					{
+// 						
+// 					}
 				}
 				
 				if (!visible) continue;
 				app.handleKeyDown(E.key);
 			}
+      else if (E.type == SDL_MOUSEBUTTONDOWN)
+      {
+        app.handleMouseDown(E.button);
+      }
 		}
 
 		glClearColor(0.08f, 0.18f, 0.18f, 1.0f);
@@ -122,10 +141,10 @@ int main(int /*argc*/, char** /*argv*/)
 		glUseProgram(program);
 		glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
 		glBegin(GL_QUADS);
-		glTexCoord2f(0.0f, 0.0f); glVertex2f(-0.80f, -0.80f);
-		glTexCoord2f(1.0f, 0.0f); glVertex2f( 0.80f, -0.80f);
-		glTexCoord2f(1.0f, 1.0f); glVertex2f( 0.80f,  0.80f);
-		glTexCoord2f(0.0f, 1.0f); glVertex2f(-0.80f,  0.80f);
+		glTexCoord2f(0.0f, 0.0f); glVertex2f(-1.00f, -1.00f);
+		glTexCoord2f(1.0f, 0.0f); glVertex2f( 1.00f, -1.00f);
+		glTexCoord2f(1.0f, 1.0f); glVertex2f( 1.00f,  1.00f);
+		glTexCoord2f(0.0f, 1.0f); glVertex2f(-1.00f,  1.00f);
 		glEnd();
 		glUseProgram(0);
 
