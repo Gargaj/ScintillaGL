@@ -2,6 +2,7 @@
 #include <gl/glee.h>
 
 #include "ShaderEditOverlay.h"
+#include "../liveCoding/liveCoding.h"
 
 class LexState : public LexInterface {
 	const LexerModule *lexCurrent;
@@ -198,7 +199,7 @@ const int markersArray[][NB_FOLDER_STATE] = {
   {SC_MARK_BOXMINUS,      SC_MARK_BOXPLUS,   SC_MARK_VLINE,        SC_MARK_LCORNER,       SC_MARK_BOXPLUSCONNECTED,    SC_MARK_BOXMINUSCONNECTED,    SC_MARK_TCORNER}
 };
 
-#define BACKGROUND(x) ( (x) | 0x80000000 )
+#define BACKGROUND(x) ( (x) | 0xC0000000 )
 
 void ShaderEditOverlay::initialiseShaderEditor() {
 
@@ -385,7 +386,8 @@ void ShaderEditOverlay::compileProgram()
 		glGetProgramiv(mSelectedProgram, GL_LINK_STATUS, &res);
 		assert(res);
 	}
-	glDeleteProgram(prg);
+
+  glDeleteProgram(prg);
 
 error:
 	glDeleteShader(sh);

@@ -4,6 +4,9 @@
 #include <SDL.h>
 #include <SDL_syswm.h>
 #include <gl/glee.h>
+#include "../liveCoding/liveCoding.h"
+
+#pragma comment(lib,"../bass/bass.lib")
 
 char fragmentSource[65536] = "void main()\n"
 "{\n"
@@ -35,6 +38,7 @@ GLuint CompileProgram(GLint srcLen, const char* src, GLint errbufLen, char* errb
 	glLinkProgram(prg);
 	glGetProgramInfoLog(prg, errbufLen-size, &size, errbuf+size);
 	glGetProgramiv(prg, GL_LINK_STATUS, &result);
+
 	if (result) goto onSuccess;
 
 onError:
@@ -46,6 +50,8 @@ onSuccess:
 
 	return prg;
 }
+
+liveCoding live;
 
 int main(int /*argc*/, char** /*argv*/)
 {
@@ -64,7 +70,6 @@ int main(int /*argc*/, char** /*argv*/)
     fragmentSource[t] = 0;
     fclose(f);
   }
-
 	uint32_t flags = SDL_HWSURFACE|SDL_OPENGLBLIT;									// We Want A Hardware Surface And Special OpenGLBlit Mode
 
 	SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 8 );								// In order to use SDL_OPENGLBLIT we have to
@@ -75,7 +80,9 @@ int main(int /*argc*/, char** /*argv*/)
 	SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE, 8 );
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, TRUE );							// colors and doublebuffering
 
-	mScreen = SDL_SetVideoMode(800, 600, 32, flags);
+  int w = 800;
+  int h = 600;
+	mScreen = SDL_SetVideoMode(w, h, 32, flags);
 	if (!mScreen)
 	{
 		SDL_Quit();
@@ -83,24 +90,29 @@ int main(int /*argc*/, char** /*argv*/)
 	}
 	
 	SDL_EnableUNICODE(TRUE);
-	SDL_EnableKeyRepeat(500, 100);
+	SDL_EnableKeyRepeat(250, 20);
 
 	SDL_SysWMinfo info = {{0, 0}, 0, 0};
 	SDL_GetWMInfo(&info);
 
 	Platform_Initialise(info.window);
 
-	app.initialise(800, 600);
+	app.initialise(w, h);
 
-	program = CompileProgram(strlen(fragmentSource), fragmentSource, sizeof(errbuf), errbuf);
+  live.resolutionX_ = w;
+  live.resolutionY_ = h;
 
-	app.addPrograms(1, &program);
+  live.startUp( 0, NULL );
+
 	Scintilla_LinkLexers();
 
 	bool run = true;
 	bool visible = true;
 
+  program = CompileProgram(strlen(fragmentSource), fragmentSource, sizeof(errbuf), errbuf);
+  app.addPrograms(1, &program);
   app.reset();
+
 	while (run)
 	{
 		SDL_Event	E;
@@ -120,7 +132,7 @@ int main(int /*argc*/, char** /*argv*/)
 // 						
 // 					}
 				}
-				
+
 				if (!visible) continue;
 				app.handleKeyDown(E.key);
 			}
@@ -137,6 +149,12 @@ int main(int /*argc*/, char** /*argv*/)
 		glLoadIdentity();
 		glMatrixMode(GL_PROJECTION);
 		glLoadIdentity();
+
+    glEnable(GL_TEXTURE_2D);
+
+    live.program_ = program;
+    live.reloadShader();
+    live.setUniforms();
 
 		glUseProgram(program);
 		glColor4f(0.0f, 1.0f, 0.0f, 1.0f);

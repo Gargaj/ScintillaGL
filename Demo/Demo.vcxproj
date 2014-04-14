@@ -19,7 +19,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -84,6 +84,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\liveCoding\liveCoding.cpp" />
+    <ClCompile Include="..\liveCoding\liveCoding_inputs.cpp" />
+    <ClCompile Include="..\liveCoding\midi.cpp" />
+    <ClCompile Include="..\liveCoding\stb_image.c" />
+    <ClCompile Include="..\liveCoding\util.cpp" />
     <ClCompile Include="Demo.cxx" />
     <ClCompile Include="..\external\GLee.c" />
     <ClCompile Include="DefaultFontData.cpp" />
@@ -91,6 +96,9 @@
     <ClCompile Include="ShaderEditOverlay.cxx" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\liveCoding\liveCoding.h" />
+    <ClInclude Include="..\liveCoding\midi.h" />
+    <ClInclude Include="..\liveCoding\util.h" />
     <ClInclude Include="DefaultFontData.h" />
     <ClInclude Include="ShaderEditOverlay.h" />
     <ClInclude Include="stb_truetype.h" />

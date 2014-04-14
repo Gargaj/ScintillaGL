@@ -5,6 +5,9 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="liveCoding">
+      <UniqueIdentifier>{04bf03e9-b07c-4c77-9d8e-4cfc57614748}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Demo.cxx">
@@ -22,6 +25,21 @@
     <ClCompile Include="ScPlatform.cxx">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\liveCoding\liveCoding.cpp">
+      <Filter>liveCoding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\liveCoding\liveCoding_inputs.cpp">
+      <Filter>liveCoding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\liveCoding\midi.cpp">
+      <Filter>liveCoding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\liveCoding\util.cpp">
+      <Filter>liveCoding</Filter>
+    </ClCompile>
+    <ClCompile Include="..\liveCoding\stb_image.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DefaultFontData.h">
@@ -32,6 +50,15 @@
     </ClInclude>
     <ClInclude Include="ShaderEditOverlay.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\liveCoding\liveCoding.h">
+      <Filter>liveCoding</Filter>
+    </ClInclude>
+    <ClInclude Include="..\liveCoding\util.h">
+      <Filter>liveCoding</Filter>
+    </ClInclude>
+    <ClInclude Include="..\liveCoding\midi.h">
+      <Filter>liveCoding</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

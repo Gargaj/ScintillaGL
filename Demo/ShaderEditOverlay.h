@@ -70,7 +70,9 @@ private:
 	//void initialiseSelectionList();
 
 	void saveShaderSource();
+public:
 	void compileProgram();
+private:
 // 	void fillListWithShaders();
 // 	void fillListWithPrograms();
 	void loadShaderSource();

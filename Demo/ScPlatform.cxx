@@ -370,12 +370,20 @@ void	UpdatePixmap(Pixmap pixmap, int w, int h, int* data)
 	pixmap->scaley = 1.0f/h;
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	glBindTexture(GL_TEXTURE_2D, 0);
+
 }
 
 void SurfaceImpl::DrawPixmap(PRectangle rc, Point offset, Pixmap pixmap)
 {
 	float w = (rc.right-rc.left)*pixmap->scalex, h=(rc.bottom-rc.top)*pixmap->scaley;
 	float u1 = offset.x*pixmap->scalex, v1 = offset.y*pixmap->scaley, u2 = u1+w, v2 = v1+h;
+
+  for (int i=0; i<8; i++)
+  {
+    glActiveTexture( GL_TEXTURE0 + i );
+    glBindTexture(GL_TEXTURE_2D, NULL);
+  }
+  glActiveTexture( GL_TEXTURE0 );
 
 	glEnable(GL_TEXTURE_2D);
 	glBindTexture(GL_TEXTURE_2D, pixmap->tex);
@@ -524,7 +532,18 @@ void Font::Release()
 void SurfaceImpl::DrawTextBase(PRectangle rc, Font &font_, float ybase, const char *s, int len,
                                  Colour fore) {
 	stbtt_Font* realFont = (stbtt_Font*)font_.GetID();
-	glEnable(GL_TEXTURE_2D);
+
+//   GLint prevActiveTexUnit;
+//   glGetIntegerv(GL_ACTIVE_TEXTURE, &prevActiveTexUnit
+  for (int i=0; i<8; i++)
+  {
+    glActiveTexture( GL_TEXTURE0 + i );
+    glBindTexture(GL_TEXTURE_2D, NULL);
+  }
+  glActiveTexture( GL_TEXTURE0 );
+
+  glEnable(GL_TEXTURE_2D);
+
 	//glEnable(GL_BLEND);
 	//glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	// assume orthographic projection with units = screen pixels, origin at top left
