@@ -17,3 +17,5 @@ License
 
 It's complicated, but all my code should be under zlib license. All original code, even if it is modified by me, I think is still under scintilla license, so not sure.
 Scintilla is licensed under some very permissive license.
+
+Contains code from The Plastic Live Coding Tool: http://www.pouet.net/topic.php?which=9881&page=1
