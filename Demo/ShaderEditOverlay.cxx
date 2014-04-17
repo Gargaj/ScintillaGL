@@ -217,7 +217,7 @@ void ShaderEditOverlay::initialiseShaderEditor() {
 	SetAStyle(mShaderEditor, STYLE_INDENTGUIDE, 0xFFC0C0C0, BACKGROUND( 0x000000 ), 16, "c:/windows/fonts/cour.ttf");
 	SetAStyle(mShaderEditor, STYLE_BRACELIGHT,  0xFF00FF00, BACKGROUND( 0x000000 ), 16, "c:/windows/fonts/cour.ttf");
 	SetAStyle(mShaderEditor, STYLE_BRACEBAD,    0xFF0000FF, BACKGROUND( 0x000000 ), 16, "c:/windows/fonts/cour.ttf");
-	SetAStyle(mShaderEditor, STYLE_LINENUMBER,  0xFFC0C0C0, BACKGROUND( 0x333333 ), 16, "c:/windows/fonts/cour.ttf");
+	SetAStyle(mShaderEditor, STYLE_LINENUMBER,  0xFFC0C0C0, BACKGROUND( 0x000000 ), 16, "c:/windows/fonts/cour.ttf");
 	mShaderEditor.Command(SCI_SETFOLDMARGINCOLOUR,   1, BACKGROUND( 0x1A1A1A ));
 	mShaderEditor.Command(SCI_SETFOLDMARGINHICOLOUR, 1, BACKGROUND( 0x1A1A1A ));
 	mShaderEditor.Command(SCI_SETSELBACK,            1, BACKGROUND( 0xCC9966 ));

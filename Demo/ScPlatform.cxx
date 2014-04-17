@@ -312,6 +312,7 @@ void SurfaceImpl::Polygon(Point* /*pts*/, int /*npts*/, Colour /*fore*/,
 void SurfaceImpl::RectangleDraw(PRectangle rc, Colour fore, Colour back) {
 	FillRectangle(rc, back);
 	glColor4ubv((GLubyte*)&fore);
+  glDisable(GL_TEXTURE_2D);
 	glBegin(GL_LINE_STRIP);
 	glVertex2f(rc.left+0.5f,  rc.top+0.5f);
 	glVertex2f(rc.right-0.5f, rc.top+0.5f);
@@ -408,8 +409,16 @@ void SurfaceImpl::DrawRGBAImage(PRectangle rc, int width, int height, const unsi
 }
 
 void SurfaceImpl::FillRectangle(PRectangle rc, Colour back) {
+  for (int i=0; i<8; i++)
+  {
+    glActiveTexture( GL_TEXTURE0 + i );
+    glBindTexture(GL_TEXTURE_2D, NULL);
+  }
+  glActiveTexture( GL_TEXTURE0 );
+
 	glColor4ubv((GLubyte*)&back);
-	glBegin(GL_QUADS);
+  glDisable(GL_TEXTURE_2D);
+  glBegin(GL_QUADS);
 	glVertex2f(rc.left,  rc.top);
 	glVertex2f(rc.right, rc.top);
 	glVertex2f(rc.right, rc.bottom);
@@ -428,6 +437,7 @@ void SurfaceImpl::RoundedRectangle(PRectangle /*rc*/, Colour /*fore*/, Colour /*
 void SurfaceImpl::AlphaRectangle(PRectangle rc, int /*cornerSize*/, Colour fill, int alphaFill,
 		Colour /*outline*/, int /*alphaOutline*/, int /*flags*/) {
 	unsigned int back = fill&0xFFFFFF | ((alphaFill&0xFF)<<24);
+  glDisable(GL_TEXTURE_2D);
 	glColor4ubv((GLubyte*)&back);
 	glBegin(GL_QUADS);
 	glVertex2f(rc.left,  rc.top);
