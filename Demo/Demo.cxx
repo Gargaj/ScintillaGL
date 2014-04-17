@@ -5,6 +5,7 @@
 #include <SDL_syswm.h>
 #include <gl/glee.h>
 #include "../liveCoding/liveCoding.h"
+#include "fwzSetup.h"
 
 #pragma comment(lib,"../bass/bass.lib")
 
@@ -55,7 +56,21 @@ liveCoding live;
 
 int main(int /*argc*/, char** /*argv*/)
 {
-	SDL_Surface* mScreen;
+  fwzSettings setup;
+  setup.hInstance = GetModuleHandle(NULL);
+#ifdef _DEBUG
+  setup.scrWidth  = 1280;
+  setup.scrHeight = 720;
+  setup.nWindowed = true;
+#else
+  setup.scrWidth  = GetSystemMetrics( SM_CXSCREEN );
+  setup.scrHeight = GetSystemMetrics( SM_CYSCREEN );
+  setup.nWindowed = false;
+  if (!OpenSetupDialog( & setup ))
+    return 0;
+#endif // _DEBUG
+
+  SDL_Surface* mScreen;
 
 	if(SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER)<0)											// Init The SDL Library, The VIDEO Subsystem
 	{
@@ -70,7 +85,12 @@ int main(int /*argc*/, char** /*argv*/)
     fragmentSource[t] = 0;
     fclose(f);
   }
-	uint32_t flags = SDL_HWSURFACE|SDL_OPENGLBLIT;									// We Want A Hardware Surface And Special OpenGLBlit Mode
+
+  int w = setup.scrWidth;
+  int h = setup.scrHeight;
+  uint32_t flags = SDL_HWSURFACE|SDL_OPENGLBLIT;									// We Want A Hardware Surface And Special OpenGLBlit Mode
+  if (!setup.nWindowed)
+    flags |= SDL_FULLSCREEN;
 
 	SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 8 );								// In order to use SDL_OPENGLBLIT we have to
 	SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 8 );							// set GL attributes first
@@ -80,8 +100,6 @@ int main(int /*argc*/, char** /*argv*/)
 	SDL_GL_SetAttribute( SDL_GL_STENCIL_SIZE, 8 );
 	SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, TRUE );							// colors and doublebuffering
 
-  int w = 800;
-  int h = 600;
 	mScreen = SDL_SetVideoMode(w, h, 32, flags);
 	if (!mScreen)
 	{

@@ -40,6 +40,9 @@
     <ClCompile Include="..\liveCoding\stb_image.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="fwzSetup.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DefaultFontData.h">
@@ -60,5 +63,12 @@
     <ClInclude Include="..\liveCoding\midi.h">
       <Filter>liveCoding</Filter>
     </ClInclude>
+    <ClInclude Include="fwzSetup.h">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FWZ.rc" />
   </ItemGroup>
 </Project>

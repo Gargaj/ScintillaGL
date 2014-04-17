@@ -25,7 +25,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -92,6 +92,7 @@
     <ClCompile Include="Demo.cxx" />
     <ClCompile Include="..\external\GLee.c" />
     <ClCompile Include="DefaultFontData.cpp" />
+    <ClCompile Include="fwzSetup.cpp" />
     <ClCompile Include="ScPlatform.cxx" />
     <ClCompile Include="ShaderEditOverlay.cxx" />
   </ItemGroup>
@@ -100,8 +101,13 @@
     <ClInclude Include="..\liveCoding\midi.h" />
     <ClInclude Include="..\liveCoding\util.h" />
     <ClInclude Include="DefaultFontData.h" />
+    <ClInclude Include="fwzSetup.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="ShaderEditOverlay.h" />
     <ClInclude Include="stb_truetype.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="FWZ.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
