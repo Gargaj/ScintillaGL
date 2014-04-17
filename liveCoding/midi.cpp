@@ -47,7 +47,7 @@ int midiDevice::startUp( const char* deviceName )
 	if( deviceId == ~0u )
 	{
 		fprintf( stderr, "Can not open MIDI device '%s': device not found\n", deviceName );
-		printf( "Available '%d' devices:n", numDevices );
+		printf( "Available '%d' devices:\n", numDevices );
 		for( unsigned i = 0; i < numDevices; ++i )
 		{
 			MIDIINCAPS capabilities;

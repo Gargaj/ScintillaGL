@@ -8,6 +8,10 @@
 #include "util.h"
 #include "midi.h"
 
+#define FFT_SIZE 1024
+#define FFT_BINS 8
+#define FFT_HISTORY_LENGTH 1024
+
 struct liveCoding
 {
 	liveCoding()
@@ -27,6 +31,9 @@ struct liveCoding
 
 		, iFFTTexture_( 0 )
 		, iFFTTextureUnit_( -1 )
+    , iFFTsHistoryTexture_( 0 )
+    , iFFTsHistoryTextureUnit_( -1 )
+    , iFFTsHistoryData_( NULL )
 
 /*
 		, hPipe_( NULL )
@@ -42,7 +49,13 @@ struct liveCoding
 		// midi
 		//
 		, midiController_( NULL )
-	{	}
+  {	
+    memset( fftBassBuf_, 0, sizeof(fftBassBuf_) );
+    memset( fft_, 0, sizeof(fft_) );
+    memset( ffts_, 0, sizeof(ffts_) );
+    memset( ffti_, 0, sizeof(ffti_) );
+    memset( fftsi_, 0, sizeof(fftsi_) );
+  }
 
 	int startUp( int argc, char* argv[] );
 	void shutDown();
@@ -125,6 +138,9 @@ struct liveCoding
 	std::vector<Tex> textures_;
 	GLuint iFFTTexture_;
 	int iFFTTextureUnit_;
+  GLuint iFFTsHistoryTexture_;
+  int iFFTsHistoryTextureUnit_;
+  float* iFFTsHistoryData_;
 
 	// pipes
 	//
@@ -142,6 +158,11 @@ struct liveCoding
 	// bass
 	//
 	HRECORD hRecord_;
+  float fftBassBuf_[FFT_SIZE];
+  float fft_[FFT_BINS];
+  float ffts_[FFT_BINS];
+  float ffti_[FFT_BINS];
+  float fftsi_[FFT_BINS];
 
 	// midi
 	//

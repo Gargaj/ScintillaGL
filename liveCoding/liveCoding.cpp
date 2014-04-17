@@ -99,6 +99,22 @@ int liveCoding::startUp( int argc, char* argv[] )
 		glBindTexture( GL_TEXTURE_1D, 0 );
 	}
 
+  {
+    glGenTextures( 1, &iFFTsHistoryTexture_ );
+    glBindTexture( GL_TEXTURE_2D, iFFTsHistoryTexture_ );
+
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+    iFFTsHistoryData_ = (float*)_aligned_malloc( 4 * FFT_BINS * FFT_HISTORY_LENGTH, 64 );
+    memset( iFFTsHistoryData_, 0, 4 * FFT_BINS * FFT_HISTORY_LENGTH );
+
+    glTexImage2D( GL_TEXTURE_2D, 0, GL_R32F, FFT_BINS, FFT_HISTORY_LENGTH, 0, GL_RED, GL_FLOAT, iFFTsHistoryData_ );
+    glBindTexture( GL_TEXTURE_2D, 0 );
+  }
+
 	setupShaderInputs();
 
 	const size_t nTextures = textures_.size();
@@ -136,7 +152,8 @@ int liveCoding::startUp( int argc, char* argv[] )
 		return ires;
 	}
 	
-	bass_startCapture();
+  if (!ires)
+  	bass_startCapture();
 
 	// midi
 	//
@@ -188,6 +205,15 @@ void liveCoding::shutDown()
 	delete[] freshSourceCode_;
 	freshSourceCode_ = NULL;
 	freshSourceCodeSize_ = 0;
+
+  _aligned_free( iFFTsHistoryData_ );
+  iFFTsHistoryData_ = NULL;
+
+  if ( iFFTsHistoryTexture_ )
+  {
+    glDeleteTextures( 1, &iFFTsHistoryTexture_ );
+    iFFTsHistoryTexture_ = 0;
+  }
 
 	if ( iFFTTexture_ )
 	{
@@ -392,6 +418,22 @@ void liveCoding::reloadShader()
 			iFFTTextureUnit_ = -1;
 		}
 	}
+
+  {
+    GLint location = glGetUniformLocation( program_, "iFFTsHistory" );
+    if ( location != -1 )
+    {
+      glProgramUniform1iEXT( program_, location, unit );
+      glActiveTexture( GL_TEXTURE0 + unit );
+      glBindTexture( GL_TEXTURE_2D, iFFTsHistoryTexture_ );
+      iFFTsHistoryTextureUnit_ = unit;
+      ++ unit;
+    }
+    else
+    {
+      iFFTsHistoryTextureUnit_ = -1;
+    }
+  }
 }
 /*
 int liveCoding::reloadShaderSource( const char* buf, size_t bufSize )
@@ -962,7 +1004,7 @@ void liveCoding::setUniforms()
     }
   }
 
-  if ( hRecord_ && iFFTTextureUnit_ >= 0 )
+  if ( hRecord_ )
   {
     unsigned len = 0;
 
@@ -998,16 +1040,88 @@ void liveCoding::setUniforms()
     {
       //memset( fftBuf, 0, sizeof(fftBuf) );
 
-      const int numBytes = BASS_ChannelGetData( hRecord_, fftBuf, len | BASS_DATA_FFT_REMOVEDC );
+      const int numBytes = BASS_ChannelGetData( hRecord_, fftBassBuf_, len | BASS_DATA_FFT_REMOVEDC );
       if( numBytes == -1 )
       {
         fprintf( stderr, "BASS_ChannelGetData failed. Err=%d\n", BASS_ErrorGetCode() );
       }
       else if ( numBytes > 0 )
       {
-        glActiveTexture( GL_TEXTURE0 + iFFTTextureUnit_ );
-        glBindTexture( GL_TEXTURE_1D, iFFTTexture_ );
-        glTexSubImage1D( GL_TEXTURE_1D, 0, 0, FFT_SIZE, GL_RED, GL_FLOAT, fftBuf );
+        memset( fft_, 0, sizeof(fft_) );
+
+        int b0=0;
+
+        for (int x=0;x<FFT_BINS;x++)
+        {
+          float peak = 0;
+          int b1 = (int)pow( 2, x*10.0/(FFT_BINS-1) );
+          if ( b1 > FFT_SIZE-1 )
+            b1 = FFT_SIZE-1;
+
+          if ( b1 <= b0 )
+            b1 = b0 + 1; // make sure it uses at least 1 FFT bin
+
+          float sum = 0;
+
+          for ( ; b0 < b1; b0++ )
+          {
+            if (peak < fftBassBuf_[1+b0])
+              peak = fftBassBuf_[1+b0];
+            sum += /*(1.0f / FFT_SIZE) **/ fftBassBuf_[1+b0];
+          }
+
+          fft_[x] = peak;
+          //fft_[x] = sum;
+        }
+
+        const float t = 0.9f;
+        for ( int i = 0; i < FFT_BINS; ++i )
+        {
+          ffts_[i] = ffts_[i]*t + (1 - t)*fft_[i];
+          ffti_[i] += fft_[i];
+          fftsi_[i] += ffts_[i];
+        }
+
+        for ( int h = FFT_HISTORY_LENGTH-1; h > 0; --h )
+        {
+          float* srcRow = iFFTsHistoryData_ + (h-1) * FFT_BINS;
+          float* dstRow = srcRow + FFT_BINS;
+          memcpy( dstRow, srcRow, 4 * FFT_BINS );
+        }
+
+        memcpy( iFFTsHistoryData_, ffts_, 4 * FFT_BINS );
+
+        if ( iFFTTextureUnit_ >= 0 )
+        {
+          glActiveTexture( GL_TEXTURE0 + iFFTTextureUnit_ );
+          glBindTexture( GL_TEXTURE_1D, iFFTTexture_ );
+          glTexSubImage1D( GL_TEXTURE_1D, 0, 0, FFT_SIZE, GL_RED, GL_FLOAT, fftBassBuf_ );
+        }
+
+        if ( iFFTsHistoryTextureUnit_ >= 0 )
+        {
+          glActiveTexture( GL_TEXTURE0 + iFFTsHistoryTextureUnit_ );
+          glBindTexture( GL_TEXTURE_2D, iFFTsHistoryTexture_ );
+          glTexSubImage2D( GL_TEXTURE_2D, 0, 0, 0, FFT_BINS, FFT_HISTORY_LENGTH, GL_RED, GL_FLOAT, iFFTsHistoryData_ );
+        }
+
+        GLint location;
+
+        location = glGetUniformLocation( program_, "iFFT" );
+        if ( location != -1 )
+          glProgramUniform1fvEXT( program_, location, FFT_BINS, fft_ );
+
+        location = glGetUniformLocation( program_, "iFFTi" );
+        if ( location != -1 )
+          glProgramUniform1fvEXT( program_, location, FFT_BINS, ffti_ );
+
+        location = glGetUniformLocation( program_, "iFFTs" );
+        if ( location != -1 )
+          glProgramUniform1fvEXT( program_, location, FFT_BINS, ffts_ );
+
+        location = glGetUniformLocation( program_, "iFFTsi" );
+        if ( location != -1 )
+          glProgramUniform1fvEXT( program_, location, FFT_BINS, fftsi_ );
       }
     }
   }
