@@ -32,6 +32,10 @@ char fragmentSource[65536] = "#version 430 core\n"
   "uniform sampler2D iTex2;\n"
   "uniform sampler2D iTex3;\n"
   "uniform sampler2D iTex4;\n"
+  "uniform sampler2D iTex5;\n"
+  "uniform sampler2D iTex6;\n"
+  "uniform sampler2D iTex7;\n"
+  "uniform sampler2D iTex8;\n"
   "uniform sampler2D iNoise;\n"
   "uniform sampler2D iChecker;\n"
   "\n"
@@ -51,7 +55,7 @@ char fragmentSource[65536] = "#version 430 core\n"
   "	float f = texture( iFFTTexture, m.y  ).r * 1000;\n"
   "	m.y -= iGlobalTime;\n"
   "	vec4 t = texture( iChecker, m.xy  );\n"
-  "	out_color = f + t;// + uv.xyxy * 0.5 * (sin( iGlobalTime ) + 1.5);\n"
+  "	out_color = f + t;\n"
   "}";
 
 static ShaderEditOverlay app;
@@ -129,7 +133,10 @@ int main(int /*argc*/, char** /*argv*/)
   int h = setup.scrHeight;
   uint32_t flags = SDL_HWSURFACE|SDL_OPENGLBLIT;									// We Want A Hardware Surface And Special OpenGLBlit Mode
   if (!setup.nWindowed)
+  {
     flags |= SDL_FULLSCREEN;
+    ShowCursor(FALSE);
+  }
 
 	SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 8 );								// In order to use SDL_OPENGLBLIT we have to
 	SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 8 );							// set GL attributes first
@@ -167,6 +174,10 @@ int main(int /*argc*/, char** /*argv*/)
 	bool visible = true;
 
   program = CompileProgram(strlen(fragmentSource), fragmentSource, sizeof(errbuf), errbuf);
+  if (!program)
+  {
+    MessageBox( NULL, errbuf, NULL, MB_ICONERROR );
+  }
   app.addPrograms(1, &program);
   app.reset();
 
