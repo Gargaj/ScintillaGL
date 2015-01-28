@@ -1,3 +1,6 @@
+This project has been proceeded with https://github.com/Gargaj/Bonzomatic - please contribute to that instead.
+=== 
+
 Building
 ===================================
 
