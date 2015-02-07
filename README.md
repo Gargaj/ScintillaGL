@@ -1,4 +1,4 @@
-This project has been proceeded with https://github.com/Gargaj/Bonzomatic - please contribute to that instead.
+This project has been succeeded by https://github.com/Gargaj/Bonzomatic - please contribute to that instead.
 === 
 
 Building
